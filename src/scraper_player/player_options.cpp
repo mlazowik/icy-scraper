@@ -1,45 +1,11 @@
 #include <stdexcept>
+#include <memory>
 
 #include "player_options.h"
 
-PlayerOptions::PlayerOptions(std::vector<std::string> arguments, int defaultPort) {
-    this->arguments = arguments;
-
-    this->port = defaultPort;
-}
-
-void PlayerOptions::parse() {
-    if (this->arguments.size() < 2 || this->arguments.size() > 3) {
-        throw std::invalid_argument("invalid argument count");
-    }
-
-    this->host = this->arguments[1];
-
-    if (this->arguments.size() == 3) {
-        std::string port_string = this->arguments[2];
-
-        std::string::size_type first_after_number;
-        try {
-            this->port = std::stoi(port_string, &first_after_number);
-        } catch (std::invalid_argument &ex) {
-            throw std::invalid_argument(port_string + " is not a number");
-        } catch (std::out_of_range &ex) {
-            throw std::out_of_range(port_string + " is out of range");
-        }
-        if (first_after_number != port_string.length()) {
-            throw std::invalid_argument(port_string + " is not a number");
-        }
-    }
-}
-
-int PlayerOptions::getPort() const {
-    return this->port;
-}
-
-std::string PlayerOptions::getHost() const {
-    return this->host;
-}
+PlayerOptions::PlayerOptions(const std::vector<std::shared_ptr<Parser>> parsers)
+        : Options(parsers, 6) { }
 
 std::string PlayerOptions::getUsage() const {
-    return "Usage: scraper_player host [PORT]";
+    return "Usage: player host path r-port file m-port md";
 }

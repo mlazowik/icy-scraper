@@ -3,21 +3,13 @@
 
 #include <string>
 #include <vector>
-#include "../common/options.h"
+#include <memory>
+#include <options/options.h>
 
 class PlayerOptions : public Options {
 public:
-    PlayerOptions(std::vector<std::string> arguments, int defaultPort);
-    void parse();
-    std::string getHost() const;
-    int getPort() const;
+    PlayerOptions(std::vector<std::shared_ptr<Parser>> parsers);
     std::string getUsage() const;
-
-private:
-    std::vector<std::string> arguments;
-
-    int port;
-    std::string host;
 };
 
 #endif //CHAT_CLIENT_OPTIONS_H
