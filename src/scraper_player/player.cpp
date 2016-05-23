@@ -3,8 +3,8 @@
 #include <string>
 #include <stdexcept>
 
-#include "client_options.h"
-#include "chat_client.h"
+#include "player_options.h"
+#include "scraper_player.h"
 #include "../common/socket.h"
 
 int main(int argc, char* argv[]) {
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
         arguments.push_back(argv[argument]);
     }
 
-    ClientOptions options(arguments, DEFAULT_PORT);
+    PlayerOptions options(arguments, DEFAULT_PORT);
 
     try {
         options.parse();
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
         IOEvents events(2);
 
-        ChatClient client(server, events);
+        ScraperPlayer client(server, events);
         client.run();
     } catch (std::exception &ex) {
         std::cerr << "Error: " << ex.what() << "\n";

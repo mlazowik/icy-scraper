@@ -5,9 +5,9 @@
 #include <vector>
 #include "../common/options.h"
 
-class ClientOptions : public Options {
+class PlayerOptions : public Options {
 public:
-    ClientOptions(std::vector<std::string> arguments, int defaultPort);
+    PlayerOptions(std::vector<std::string> arguments, int defaultPort);
     void parse();
     std::string getHost() const;
     int getPort() const;

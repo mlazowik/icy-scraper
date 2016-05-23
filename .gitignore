@@ -43,9 +43,3 @@ tags
 build/
 debug/
 ext_tests/
-
-*.o
-src/server
-src/client
-src/chat_client/client
-src/chat_server/server

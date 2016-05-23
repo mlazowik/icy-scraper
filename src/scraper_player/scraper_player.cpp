@@ -3,20 +3,20 @@
 #include <cstring>
 #include <system_error>
 
-#include "chat_client.h"
+#include "scraper_player.h"
 
-ChatClient::ChatClient(Socket &serverSocket, IOEvents &events)
+ScraperPlayer::ScraperPlayer(Socket &serverSocket, IOEvents &events)
         : serverSocket(serverSocket), events(events) {
-    this->clientSocekt = new Socket(fileno(stdin));
+    this->clientSocket = new Socket(fileno(stdin));
 }
 
-ChatClient::~ChatClient() {
-    delete this->clientSocekt;
+ScraperPlayer::~ScraperPlayer() {
+    delete this->clientSocket;
 }
 
-void ChatClient::run() {
+void ScraperPlayer::run() {
     this->server = new Connection(this->serverSocket);
-    this->client = new Connection(*this->clientSocekt);
+    this->client = new Connection(*this->clientSocket);
 
     this->events.registerConnection(
             this->server,
@@ -37,7 +37,7 @@ void ChatClient::run() {
     }
 }
 
-void ChatClient::handleServerEvent(Connection *connection, short revents) {
+void ScraperPlayer::handleServerEvent(Connection *connection, short revents) {
     if (!(revents & (POLLIN | POLLHUP))) return;
 
     try {
@@ -62,7 +62,7 @@ void ChatClient::handleServerEvent(Connection *connection, short revents) {
     }
 }
 
-void ChatClient::handleClientEvent(Connection *connection, short revents) {
+void ScraperPlayer::handleClientEvent(Connection *connection, short revents) {
     if (!(revents & (POLLIN | POLLHUP))) return;
 
     char buffer[this->BUFFER_SIZE];
@@ -85,7 +85,7 @@ void ChatClient::handleClientEvent(Connection *connection, short revents) {
     }
 }
 
-void ChatClient::disconnectServer(Connection *connection) {
+void ScraperPlayer::disconnectServer(Connection *connection) {
     this->events.deregisterConnection(connection);
     connection->destroy();
     delete connection;

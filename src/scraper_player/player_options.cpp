@@ -1,14 +1,14 @@
 #include <stdexcept>
 
-#include "client_options.h"
+#include "player_options.h"
 
-ClientOptions::ClientOptions(std::vector<std::string> arguments, int defaultPort) {
+PlayerOptions::PlayerOptions(std::vector<std::string> arguments, int defaultPort) {
     this->arguments = arguments;
 
     this->port = defaultPort;
 }
 
-void ClientOptions::parse() {
+void PlayerOptions::parse() {
     if (this->arguments.size() < 2 || this->arguments.size() > 3) {
         throw std::invalid_argument("invalid argument count");
     }
@@ -32,14 +32,14 @@ void ClientOptions::parse() {
     }
 }
 
-int ClientOptions::getPort() const {
+int PlayerOptions::getPort() const {
     return this->port;
 }
 
-std::string ClientOptions::getHost() const {
+std::string PlayerOptions::getHost() const {
     return this->host;
 }
 
-std::string ClientOptions::getUsage() const {
-    return "Usage: chat_client host [PORT]";
+std::string PlayerOptions::getUsage() const {
+    return "Usage: scraper_player host [PORT]";
 }

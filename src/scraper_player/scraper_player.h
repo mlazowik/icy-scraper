@@ -4,10 +4,10 @@
 #include "../common/socket.h"
 #include "../common/io_events.h"
 
-class ChatClient {
+class ScraperPlayer {
 public:
-    ChatClient(Socket &serverSocket, IOEvents &events);
-    ~ChatClient();
+    ScraperPlayer(Socket &serverSocket, IOEvents &events);
+    ~ScraperPlayer();
     void run();
 
 private:
@@ -17,7 +17,7 @@ private:
     void disconnectServer(Connection *connection);
 
     Socket serverSocket;
-    Socket *clientSocekt;
+    Socket *clientSocket;
     IOEvents events;
 
     const int BUFFER_SIZE = 1024;

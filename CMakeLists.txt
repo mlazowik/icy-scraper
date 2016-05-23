@@ -41,10 +41,10 @@ target_link_libraries(
 include(CTest)
 enable_testing()
 
-set(CLIENT_SOURCE_FILES
-        src/chat_client/client.cpp
-        src/chat_client/client_options.cpp
-        src/chat_client/client_options.h
+set(PLAYER_SOURCE_FILES
+        src/scraper_player/player.cpp
+        src/scraper_player/player_options.cpp
+        src/scraper_player/player_options.h
         src/common/options.h
         src/common/socket.cpp
         src/common/socket.h
@@ -55,10 +55,10 @@ set(CLIENT_SOURCE_FILES
         src/common/stream.h
         src/common/connection.cpp
         src/common/connection.h
-        src/chat_client/chat_client.cpp
-        src/chat_client/chat_client.h
+        src/scraper_player/scraper_player.cpp
+        src/scraper_player/scraper_player.h
         src/common/connection.cpp
         src/common/connection.h
         src/common/descriptor.h)
 
-add_executable(client ${CLIENT_SOURCE_FILES})
+add_executable(player ${PLAYER_SOURCE_FILES})
