@@ -29,22 +29,5 @@ int main(int argc, char* argv[]) {
     int port = options.getPort();
     std::string host = options.getHost();
 
-    Socket server;
-
-    try {
-        server.setPort(port);
-        server.setHost(host);
-
-        server.connect();
-
-        IOEvents events(2);
-
-        ScraperPlayer client(server, events);
-        client.run();
-    } catch (std::exception &ex) {
-        std::cerr << "Error: " << ex.what() << "\n";
-        exit(EXIT_FAILURE);
-    }
-
     return 0;
 }
