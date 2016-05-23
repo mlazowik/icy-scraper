@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
         client.run();
     } catch (std::exception &ex) {
         std::cerr << "Error: " << ex.what() << "\n";
-        exit(100);
+        exit(EXIT_FAILURE);
     }
 
     return 0;

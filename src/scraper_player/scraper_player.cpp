@@ -45,14 +45,14 @@ void ScraperPlayer::handleServerEvent(Connection *connection, short revents) {
     } catch (invalid_message_error &ex) {
         std::cerr << "Invalid message\n";
         this->disconnectServer(connection);
-        exit(100);
+        exit(EXIT_FAILURE);
     } catch (stream_closed_error &ex) {
         std::cerr << "Server closed connection\n";
         this->disconnectServer(connection);
-        exit(100);
+        exit(EXIT_FAILURE);
     } catch (std::system_error &ex) {
         this->disconnectServer(connection);
-        exit(100);
+        exit(EXIT_FAILURE);
     }
 
     if (connection->finishedReading()) {
