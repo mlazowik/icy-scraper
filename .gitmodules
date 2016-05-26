@@ -4,9 +4,6 @@
 [submodule "lib/options"]
 	path = lib/options
 	url = git@github.com:mlazowik/options.git
-[submodule "lib/stream"]
-	path = lib/stream
-	url = git@github.com:mlazowik/stream.git
-[submodule "lib/io"]
-	path = lib/io
-	url = git@github.com:mlazowik/io.git
+[submodule "lib/networking"]
+	path = lib/networking
+	url = git@github.com:mlazowik/networking.git

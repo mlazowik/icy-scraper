@@ -41,39 +41,16 @@ target_link_libraries(
 include(CTest)
 enable_testing()
 
-set(OPTIONS_ROOT lib/options/options CACHE STRING "Options source root")
-
-include_directories(
-        ${PROJECT_SOURCE_DIR}/${OPTIONS_ROOT}
-)
-
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/options)
-
-set(STREAM_ROOT lib/stream/stream CACHE STRING "Stream source root")
-
-include_directories(
-        ${PROJECT_SOURCE_DIR}/${STREAM_ROOT}
-)
-
-add_subdirectory(${PROJECT_SOURCE_DIR}/lib/stream)
-
-set(STREAM_ROOT lib/io/io CACHE STRING "IO source root")
-
-include_directories(
-        ${PROJECT_SOURCE_DIR}/${STREAM_ROOT}
-)
-
-add_subdirectory(${PROJECT_SOURCE_DIR}/lib/io)
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/networking)
 
 set(PLAYER_SOURCE_FILES
         src/scraper_player/player.cpp
         src/scraper_player/player_options.cpp
-        src/scraper_player/player_options.h
-        src/common/socket.cpp
-        src/common/socket.h)
+        src/scraper_player/player_options.h)
 
 add_executable(player ${PLAYER_SOURCE_FILES})
 
-add_dependencies(player options stream io)
+add_dependencies(player options stream io networking)
 
-target_link_libraries(player options stream io)
+target_link_libraries(player options stream io networking)

@@ -1,10 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include <stdexcept>
-#include <memory>
 
-#include <common/socket.h>
 #include <options/string_parser.h>
 #include <options/number_parser.h>
 #include <options/boolean_parser.h>
