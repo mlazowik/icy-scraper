@@ -4,8 +4,27 @@
 #include <options/string_parser.h>
 #include <options/number_parser.h>
 #include <options/boolean_parser.h>
+#include <networking/socket.h>
+#include <stream/string_reader.h>
+#include <io/io_events.h>
 
 #include "player_options.h"
+
+StringReader* getLineReader(Socket &socket) {
+    return new StringReader(socket, [&](std::string s) {
+        return (s.length() >= 2 && s[s.length() - 2] == '\r' && s[s.length() - 1] == '\n');
+    });
+}
+
+std::string getRequest(std::string path, bool pullMetadata) {
+    std::string eol = "\r\n";
+
+    std::string type = "GET " + path + " HTTP/1.0" + eol;
+    std::string metadataFlag = (pullMetadata) ? "1" : "0";
+    std::string metadataTag = "Icy-Metadata:" + metadataFlag + eol;
+
+    return type + metadataTag + eol;
+}
 
 int main(int argc, char* argv[]) {
     auto radioHost = std::make_shared<StringParser>(argv[1]);
@@ -31,6 +50,48 @@ int main(int argc, char* argv[]) {
             metadata->getValue() << "\n";
     std::cout << "File: " << file->getValue() << "\n";
     std::cout << "Control port: " << controlPort->getValue() << "\n";
+
+    Socket radio;
+
+    IOEvents events(2);
+
+    StringReader *reader;
+
+    try {
+        radio.setPort(radioPort->getValue());
+        radio.setHost(radioHost->getValue());
+
+        radio.connect();
+
+        std::string request = getRequest(streamPath->getValue(), metadata->getValue());
+
+        radio.sendChunk(request.c_str(), request.length());
+
+        reader = getLineReader(radio);
+
+        events.registerDescriptor(&radio, [&](Descriptor *socket, short revents) {
+            reader->readNextChunk();
+
+            if (reader->finished()) {
+                std::cerr << reader->getValue();
+
+                if (reader->getValue() == "\r\n") {
+                    events.removeDescriptor(&radio);
+                    delete reader;
+                } else {
+                    delete reader;
+                    reader = getLineReader(radio);
+                }
+            }
+        });
+
+        while (true) {
+            events.processEvents();
+        }
+    } catch (std::exception &ex) {
+        std::cerr << "Error: " << ex.what() << "\n";
+        exit(EXIT_FAILURE);
+    }
 
     return 0;
 }
