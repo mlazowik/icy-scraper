@@ -10,7 +10,6 @@
 #include <options/boolean_parser.h>
 
 #include "player_options.h"
-#include "scraper_player.h"
 
 int main(int argc, char* argv[]) {
     auto radioHost = std::make_shared<StringParser>(argv[1]);

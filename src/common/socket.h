@@ -3,11 +3,11 @@
 
 #include <string>
 #include <netdb.h>
+#include <io/descriptor.h>
 
 #include "stream.h"
-#include "descriptor.h"
 
-class Socket : public Stream, public Desciptor {
+class Socket : public Stream, public Descriptor {
 public:
     Socket();
     Socket(int descriptor);
@@ -24,10 +24,10 @@ public:
     void startListening();
     Socket acceptConnection();
 
-    bool operator==(const Desciptor &rhs) const;
-    bool operator!=(const Desciptor &rhs) const;
-    bool operator<(const Desciptor &rhs) const;
-    bool operator>(const Desciptor &rhs) const;
+    bool operator==(const Descriptor &rhs) const;
+    bool operator!=(const Descriptor &rhs) const;
+    bool operator<(const Descriptor &rhs) const;
+    bool operator>(const Descriptor &rhs) const;
 
     size_t getChunk(void *buffer, size_t bufferSize) const;
     void sendChunk(const void *buffer, size_t bufferSize) const;

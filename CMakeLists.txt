@@ -41,24 +41,39 @@ target_link_libraries(
 include(CTest)
 enable_testing()
 
+set(OPTIONS_ROOT lib/options/options CACHE STRING "Options source root")
+
+include_directories(
+        ${PROJECT_SOURCE_DIR}/${OPTIONS_ROOT}
+)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/options)
+
+set(STREAM_ROOT lib/stream/stream CACHE STRING "Stream source root")
+
+include_directories(
+        ${PROJECT_SOURCE_DIR}/${STREAM_ROOT}
+)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/stream)
+
+set(STREAM_ROOT lib/io/io CACHE STRING "IO source root")
+
+include_directories(
+        ${PROJECT_SOURCE_DIR}/${STREAM_ROOT}
+)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/io)
+
 set(PLAYER_SOURCE_FILES
         src/scraper_player/player.cpp
         src/scraper_player/player_options.cpp
         src/scraper_player/player_options.h
-        src/options/options.h
         src/common/socket.cpp
-        src/common/socket.h
-        src/common/io_events.cpp
-        src/common/io_events.h
-        src/common/stream_reader.cpp
-        src/common/stream_reader.h
-        src/common/stream.h
-        src/common/connection.cpp
-        src/common/connection.h
-        src/scraper_player/scraper_player.cpp
-        src/scraper_player/scraper_player.h
-        src/common/connection.cpp
-        src/common/connection.h
-        src/common/descriptor.h src/options/options.cpp src/options/parser.h src/options/number_parser.cpp src/options/number_parser.h src/options/string_parser.cpp src/options/string_parser.h src/options/boolean_parser.cpp src/options/boolean_parser.h)
+        src/common/socket.h)
 
 add_executable(player ${PLAYER_SOURCE_FILES})
+
+add_dependencies(player options stream io)
+
+target_link_libraries(player options stream io)

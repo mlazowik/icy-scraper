@@ -109,18 +109,18 @@ void Socket::sendChunk(const void *buffer, size_t bufferSize) const {
     }
 }
 
-bool Socket::operator==(const Desciptor &rhs) const {
+bool Socket::operator==(const Descriptor &rhs) const {
     return this->getDescriptor() == rhs.getDescriptor();
 }
 
-bool Socket::operator!=(const Desciptor &rhs) const {
+bool Socket::operator!=(const Descriptor &rhs) const {
     return !(*this == rhs);
 }
 
-bool Socket::operator<(const Desciptor &rhs) const {
+bool Socket::operator<(const Descriptor &rhs) const {
     return this->getDescriptor() < rhs.getDescriptor();
 }
 
-bool Socket::operator>(const Desciptor &rhs) const {
+bool Socket::operator>(const Descriptor &rhs) const {
     return !(*this < rhs || *this == rhs);
 }
