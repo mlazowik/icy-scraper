@@ -53,6 +53,6 @@ set(PLAYER_SOURCE_FILES
 
 add_executable(player ${PLAYER_SOURCE_FILES})
 
-add_dependencies(player options stream io networking)
+add_dependencies(player options stream io networking string_utils)
 
-target_link_libraries(player options stream io networking)
+target_link_libraries(player options stream io networking string_utils)

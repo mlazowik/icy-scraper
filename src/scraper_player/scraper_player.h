@@ -14,11 +14,6 @@ public:
 private:
     const std::string EOL = "\r\n";
 
-    bool startsWith(const std::string &string, const std::string &prefix);
-    bool endsWith(const std::string &string, const std::string &suffix);
-
-    int toInt(std::string numberString);
-
     std::string getRequest();
     void handleRadioEvent(Socket *socket, short revents);
     Reader* getLineReader();
