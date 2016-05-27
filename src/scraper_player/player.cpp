@@ -10,20 +10,28 @@
 
 #include "player_options.h"
 
+const std::string EOL = "\r\n";
+
+bool endsWith(const std::string &string, const std::string &suffix) {
+    if (string.length() < suffix.length()) {
+        return false;
+    }
+
+    return std::equal(suffix.rbegin(), suffix.rend(), string.rbegin());
+}
+
 StringReader* getLineReader(Socket &socket) {
     return new StringReader(socket, [&](std::string s) {
-        return (s.length() >= 2 && s[s.length() - 2] == '\r' && s[s.length() - 1] == '\n');
+        return endsWith(s, EOL);
     });
 }
 
 std::string getRequest(std::string path, bool pullMetadata) {
-    std::string eol = "\r\n";
-
-    std::string type = "GET " + path + " HTTP/1.0" + eol;
+    std::string type = "GET " + path + " HTTP/1.0" + EOL;
     std::string metadataFlag = (pullMetadata) ? "1" : "0";
-    std::string metadataTag = "Icy-Metadata:" + metadataFlag + eol;
+    std::string metadataTag = "Icy-Metadata:" + metadataFlag + EOL;
 
-    return type + metadataTag + eol;
+    return type + metadataTag + EOL;
 }
 
 int main(int argc, char* argv[]) {
