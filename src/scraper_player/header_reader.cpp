@@ -19,7 +19,8 @@ void HeaderReader::readNextChunk() {
         delete this->reader;
 
         if (String::startsWith(this->currentLine, this->metadataIntervalHeader)) {
-            this->parseMetadataHeader();
+            this->metadataIntervalPresent = true;
+            this->metadataInterval = this->parseMetadataHeader();
         }
 
         if (this->currentLine == EOL) {
@@ -34,13 +35,13 @@ int HeaderReader::getMetadataInterval() {
     return this->metadataInterval;
 }
 
-void HeaderReader::parseMetadataHeader() {
+int HeaderReader::parseMetadataHeader() {
     std::string numberString = this->currentLine.substr(
             this->metadataIntervalHeader.length(),
             this->currentLine.length() - this->metadataIntervalHeader.length() - 2
     );
 
-    this->metadataInterval = String::toInt(numberString);
+    return String::toInt(numberString);
 }
 
 bool HeaderReader::finished() const {

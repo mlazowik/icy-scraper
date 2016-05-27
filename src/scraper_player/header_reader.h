@@ -21,9 +21,11 @@ private:
     std::string currentLine;
 
     int metadataInterval = 0;
+    bool metadataIntervalPresent = false;
+
     bool readEmptyLine = false;
 
-    void parseMetadataHeader();
+    int parseMetadataHeader();
 
     Reader* getLineReader();
 
