@@ -16,7 +16,6 @@ private:
 
     std::string getRequest();
     void handleRadioEvent(Socket *socket, short revents);
-    Reader* getLineReader();
 
     int metadataInterval = 0;
 

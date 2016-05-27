@@ -3,12 +3,13 @@
 #include <string-utils/utils.h>
 
 #include "scraper_player.h"
+#include "header_reader.h"
 
 ScraperPlayer::ScraperPlayer(Socket &radioSocket, IOEvents &events,
                              std::string streamPath, bool metadata)
         : radioSocket(radioSocket), events(events), streamPath(streamPath),
           metadata(metadata) {
-    this->reader = this->getLineReader();
+    this->reader = new HeaderReader(this->radioSocket);
 }
 
 void ScraperPlayer::run() {
@@ -32,35 +33,8 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
     this->reader->readNextChunk();
 
     if (reader->finished()) {
-        std::string line = ((StringReader*)reader)->getValue();
-        delete this->reader;
-
-        std::cerr << line;
-
-        std::string metadataIntervalHeader = "icy-metaint:";
-
-        if (String::startsWith(line, metadataIntervalHeader)) {
-            std::string numberString = line.substr(
-                    metadataIntervalHeader.length(),
-                    line.length() - metadataIntervalHeader.length() - 2
-            );
-
-            this->metadataInterval = String::toInt(numberString);
-        }
-
-        if (line == EOL) {
-            this->events.removeDescriptor(&this->radioSocket);
-            std::cerr << "Interval: " << metadataInterval << "\n";
-        } else {
-            this->reader = getLineReader();
-        }
+        this->metadataInterval = ((HeaderReader*)this->reader)->getMetadataInterval();
     }
-}
-
-Reader *ScraperPlayer::getLineReader() {
-    return new StringReader(this->radioSocket, [&](std::string s) {
-        return String::endsWith(s, EOL);
-    });
 }
 
 std::string ScraperPlayer::getRequest() {
