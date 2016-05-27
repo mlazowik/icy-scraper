@@ -47,7 +47,9 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/lib/networking)
 set(PLAYER_SOURCE_FILES
         src/scraper_player/player.cpp
         src/scraper_player/player_options.cpp
-        src/scraper_player/player_options.h)
+        src/scraper_player/player_options.h
+        src/scraper_player/scraper_player.cpp
+        src/scraper_player/scraper_player.h)
 
 add_executable(player ${PLAYER_SOURCE_FILES})
 
