@@ -17,7 +17,9 @@ private:
     std::string getRequest();
     void handleRadioEvent(Socket *socket, short revents);
 
-    int metadataInterval = 0;
+    size_t metadataInterval = 0;
+    size_t leftTillMetadata;
+    size_t chunkLength;
 
     Socket radioSocket;
     IOEvents events;
@@ -26,10 +28,12 @@ private:
 
     enum class Reading {
         HEADER,
-        STREAM
+        STREAM,
+        METADATA
     } reading;
 
     Reader* getStreamChunkReader();
+    Reader* getMetadataReader();
 
     Reader *reader;
 };

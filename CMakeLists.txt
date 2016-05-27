@@ -49,7 +49,7 @@ set(PLAYER_SOURCE_FILES
         src/scraper_player/player_options.cpp
         src/scraper_player/player_options.h
         src/scraper_player/scraper_player.cpp
-        src/scraper_player/scraper_player.h src/scraper_player/header_reader.cpp src/scraper_player/header_reader.h)
+        src/scraper_player/scraper_player.h src/scraper_player/header_reader.cpp src/scraper_player/header_reader.h src/scraper_player/metadata_reader.cpp src/scraper_player/metadata_reader.h)
 
 add_executable(player ${PLAYER_SOURCE_FILES})
 
