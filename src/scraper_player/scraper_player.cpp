@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stream/string_reader.h>
 #include <string-utils/utils.h>
+#include <unistd.h>
 
 #include "scraper_player.h"
 #include "header_reader.h"
@@ -10,6 +11,7 @@ ScraperPlayer::ScraperPlayer(Socket &radioSocket, IOEvents &events,
         : radioSocket(radioSocket), events(events), streamPath(streamPath),
           metadata(metadata) {
     this->reader = new HeaderReader(this->radioSocket);
+    this->reading = Reading::HEADER;
 }
 
 void ScraperPlayer::run() {
@@ -33,7 +35,24 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
     this->reader->readNextChunk();
 
     if (reader->finished()) {
-        this->metadataInterval = ((HeaderReader*)this->reader)->getMetadataInterval();
+        switch (this->reading) {
+            case Reading::HEADER:
+                this->metadataInterval = ((HeaderReader*)this->reader)->getMetadataInterval();
+
+                this->reading = Reading::STREAM;
+                delete this->reader;
+                this->reader = getStreamChunkReader();
+
+                break;
+            case Reading::STREAM:
+                std::string s = ((StringReader*)this->reader)->getValue();
+                write(fileno(stdout), s.c_str(), s.length());
+
+                delete this->reader;
+                this->reader = getStreamChunkReader();
+
+                break;
+        }
     }
 }
 
@@ -43,4 +62,10 @@ std::string ScraperPlayer::getRequest() {
     std::string metadataTag = "Icy-Metadata:" + metadataFlag + this->EOL;
 
     return type + metadataTag + this->EOL;
+}
+
+Reader *ScraperPlayer::getStreamChunkReader() {
+    return new StringReader(this->radioSocket, [&](std::string s) {
+        return s.length() == 1000;
+    });
 }

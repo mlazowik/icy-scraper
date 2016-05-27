@@ -24,6 +24,13 @@ private:
     std::string streamPath;
     bool metadata;
 
+    enum class Reading {
+        HEADER,
+        STREAM
+    } reading;
+
+    Reader* getStreamChunkReader();
+
     Reader *reader;
 };
 
