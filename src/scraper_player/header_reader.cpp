@@ -15,6 +15,8 @@ void HeaderReader::readNextChunk() {
     this->reader->readNextChunk();
 
     if (reader->finished()) {
+        // TODO: Check if protocol & status match (ICY 200)
+
         this->currentLine = ((StringReader*)reader)->getValue();
         delete this->reader;
 
