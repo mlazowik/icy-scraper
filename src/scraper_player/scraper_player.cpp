@@ -87,6 +87,8 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
 }
 
 std::string ScraperPlayer::getRequest() {
+    // TODO: Send user agent in request
+
     std::string type = "GET " + this->streamPath + " HTTP/1.0" + this->EOL;
     std::string metadataFlag = (this->metadata) ? "1" : "0";
     std::string metadataTag = "Icy-Metadata:" + metadataFlag + this->EOL;
