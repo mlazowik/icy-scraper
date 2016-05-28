@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stream/string_reader.h>
-#include <string-utils/utils.h>
 #include <unistd.h>
 
 #include "scraper_player.h"
