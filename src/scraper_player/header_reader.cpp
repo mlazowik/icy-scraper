@@ -44,6 +44,7 @@ int HeaderReader::parseMetadataHeader() {
             this->currentLine.length() - this->metadataIntervalHeader.length() - 2
     );
 
+    // TODO: (unsigned) long long?
     return String::toInt(numberString);
 }
 
