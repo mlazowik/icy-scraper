@@ -29,11 +29,11 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    std::cout << "Radio: http://" << radioHost->getValue() << ":" <<
+    std::cerr << "Radio: http://" << radioHost->getValue() << ":" <<
             radioPort->getValue() << streamPath->getValue() << ", metadata: " <<
             metadata->getValue() << "\n";
-    std::cout << "File: " << file->getValue() << "\n";
-    std::cout << "Control port: " << controlPort->getValue() << "\n";
+    std::cerr << "File: " << file->getValue() << "\n";
+    std::cerr << "Control port: " << controlPort->getValue() << "\n";
 
     Socket radio;
 
