@@ -39,7 +39,10 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
 
         switch (this->reading) {
             case Reading::HEADER:
-                this->metadataInterval = ((HeaderReader*)this->reader)->getMetadataInterval();
+                this->metadataInterval = (
+                        (HeaderReader*)this->reader
+                )->getMetadataInterval();
+
                 this->leftTillMetadata = this->metadataInterval;
 
                 this->reading = Reading::STREAM;

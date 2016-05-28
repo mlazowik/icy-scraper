@@ -21,6 +21,9 @@ void HeaderReader::readNextChunk() {
         if (String::startsWith(this->currentLine, this->metadataIntervalHeader)) {
             this->metadataIntervalPresent = true;
             this->metadataInterval = this->parseMetadataHeader();
+            if (this->metadataInterval <= 0) {
+                throw new std::invalid_argument("metadata interval must be positive");
+            }
         }
 
         if (this->currentLine == EOL) {
@@ -49,6 +52,8 @@ bool HeaderReader::finished() const {
 }
 
 Reader* HeaderReader::getLineReader() {
+    // TODO: Slip long header lines
+
     return new StringReader(this->stream, [&](std::string s) {
         return String::endsWith(s, this->EOL);
     });
