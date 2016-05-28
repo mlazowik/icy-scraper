@@ -21,6 +21,8 @@ private:
     size_t leftTillMetadata;
     size_t chunkLength;
 
+    std::string getTitle(std::string metadata);
+
     Socket radioSocket;
     IOEvents events;
     std::string streamPath;

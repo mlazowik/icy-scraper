@@ -72,7 +72,7 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
             case Reading::METADATA:
                 metadata = ((MetadataReader*)this->reader)->getMetadata();
                 if (metadata.length() > 0) {
-                    std::cerr << metadata << "\n";
+                    std::cerr << this->getTitle(metadata) << "\n";
                 }
 
                 delete this->reader;
@@ -84,6 +84,27 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
                 break;
         }
     }
+}
+
+std::string ScraperPlayer::getTitle(std::string metadata) {
+    std::string title;
+
+    std::string titleParam = "StreamTitle='";
+    size_t start = metadata.find(titleParam);
+
+    if (start == std::string::npos) {
+        return title;
+    }
+
+    metadata = metadata.substr(start + titleParam.length());
+
+    size_t end  = metadata.find("';");
+
+    if (end == std::string::npos) {
+        return title;
+    }
+
+    return metadata.substr(0, end);
 }
 
 std::string ScraperPlayer::getRequest() {
