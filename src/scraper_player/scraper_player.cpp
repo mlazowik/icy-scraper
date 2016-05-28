@@ -52,6 +52,7 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
                 break;
             case Reading::STREAM:
                 s = ((StringReader*)this->reader)->getValue();
+                // TODO: use event loop for writing
                 write(fileno(stdout), s.c_str(), s.length());
 
                 delete this->reader;
