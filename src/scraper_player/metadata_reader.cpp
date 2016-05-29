@@ -3,7 +3,7 @@
 #include <stream/string_reader.h>
 #include "metadata_reader.h"
 
-MetadataReader::MetadataReader(Socket &socket) : socket(socket) {
+MetadataReader::MetadataReader(TCPSocket &socket) : socket(socket) {
     this->reader = this->getMetadataLengthReader();
     this->reading = Reading::LENGTH;
 }

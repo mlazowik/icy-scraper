@@ -4,7 +4,7 @@
 #include <options/string_parser.h>
 #include <options/number_parser.h>
 #include <options/boolean_parser.h>
-#include <networking/socket.h>
+#include <networking/tcp_socket.h>
 #include <io/io_events.h>
 
 #include "player_options.h"
@@ -35,17 +35,21 @@ int main(int argc, char* argv[]) {
     std::cerr << "File: " << file->getValue() << "\n";
     std::cerr << "Control port: " << controlPort->getValue() << "\n";
 
-    Socket radio;
+    TCPSocket radio;
+    UDPSocket control;
 
     IOEvents events(2);
 
     try {
+        control.setPort(controlPort->getValue());
+        control.bindToAddress();
+
         radio.setPort(radioPort->getValue());
         radio.setHost(radioHost->getValue());
 
         radio.connect();
 
-        ScraperPlayer player(radio, events, streamPath->getValue(),
+        ScraperPlayer player(radio, control, events, streamPath->getValue(),
                              metadata->getValue());
 
         player.run();

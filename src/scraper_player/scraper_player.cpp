@@ -6,10 +6,11 @@
 #include "header_reader.h"
 #include "metadata_reader.h"
 
-ScraperPlayer::ScraperPlayer(Socket &radioSocket, IOEvents &events,
-                             std::string streamPath, bool metadata)
-        : radioSocket(radioSocket), events(events), streamPath(streamPath),
-          metadata(metadata) {
+ScraperPlayer::ScraperPlayer(TCPSocket &radioSocket, UDPSocket &controlSocket,
+                             IOEvents &events, std::string streamPath,
+                             bool metadata)
+        : radioSocket(radioSocket), controlSocket(controlSocket),
+          events(events), streamPath(streamPath), metadata(metadata) {
     this->reader = new HeaderReader(this->radioSocket);
     this->reading = Reading::HEADER;
 }
@@ -22,7 +23,14 @@ void ScraperPlayer::run() {
     this->events.registerDescriptor(
             &this->radioSocket,
             [&](Descriptor *socket, short revents) {
-                this->handleRadioEvent((Socket*) socket, revents);
+                this->handleRadioEvent((TCPSocket*) socket, revents);
+            }
+    );
+
+    this->events.registerDescriptor(
+            &this->controlSocket,
+            [&](Descriptor *socket, short revents) {
+                this->handleControlEvent((UDPSocket*) socket, revents);
             }
     );
 
@@ -31,7 +39,7 @@ void ScraperPlayer::run() {
     }
 }
 
-void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
+void ScraperPlayer::handleRadioEvent(TCPSocket *socket, short revents) {
     this->reader->readNextChunk();
 
     if (reader->finished()) {
@@ -53,7 +61,9 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
             case Reading::STREAM:
                 s = ((StringReader*)this->reader)->getValue();
                 // TODO: use event loop for writing
-                write(fileno(stdout), s.c_str(), s.length());
+                if (this->writing) {
+                    write(fileno(stdout), s.c_str(), s.length());
+                }
 
                 delete this->reader;
 
@@ -73,7 +83,7 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
             case Reading::METADATA:
                 metadata = ((MetadataReader*)this->reader)->getMetadata();
                 if (metadata.length() > 0) {
-                    std::cerr << this->getTitle(metadata) << "\n";
+                    this->currentTitle = getTitle(metadata);
                 }
 
                 delete this->reader;
@@ -85,6 +95,40 @@ void ScraperPlayer::handleRadioEvent(Socket *socket, short revents) {
                 break;
         }
     }
+}
+
+void ScraperPlayer::handleControlEvent(UDPSocket *socket, short revents) {
+    struct sockaddr_in client_address;
+    socklen_t address_length = (socklen_t) sizeof(client_address);
+    char buffer[10];
+    int flags = 0, send_flags = 0;
+
+    ssize_t len = recvfrom(socket->getDescriptor(), buffer, sizeof(buffer),
+                           flags, (struct sockaddr *) &client_address,
+                           &address_length);
+
+    // TODO: check if this overflows
+    buffer[len] = '\0';
+
+    std::string command(buffer);
+
+    if (command == "PAUSE") this->writing = false;
+    if (command == "PLAY") this->writing = true;
+    if (command == "TITLE") {
+        ssize_t sent_len = sendto(
+                socket->getDescriptor(),
+                this->currentTitle.c_str(),
+                this->currentTitle.length(),
+                send_flags,
+                (struct sockaddr *) &client_address,
+                address_length
+        );
+
+        if (sent_len != this->currentTitle.length()) {
+            throw new std::runtime_error("Error while replying to TITLE");
+        }
+    }
+    if (command == "QUIT") exit(EXIT_SUCCESS);
 }
 
 std::string ScraperPlayer::getTitle(std::string metadata) {
@@ -119,7 +163,7 @@ std::string ScraperPlayer::getRequest() {
 }
 
 Reader *ScraperPlayer::getStreamChunkReader() {
-    this->chunkLength = 1000;
+    this->chunkLength = 10;
 
     if (this->metadataInterval > 0) {
         this->chunkLength = std::min(this->chunkLength, this->leftTillMetadata);

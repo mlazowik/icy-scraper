@@ -2,18 +2,18 @@
 #define CHAT_METADATA_READER_H
 
 #include <stream/reader.h>
-#include <networking/socket.h>
+#include <networking/tcp_socket.h>
 
 class MetadataReader : public Reader {
 public:
-    MetadataReader(Socket &socket);
+    MetadataReader(TCPSocket &socket);
     void readNextChunk();
     bool finished() const;
 
     std::string getMetadata();
 
 private:
-    Socket &socket;
+    TCPSocket &socket;
 
     u_int8_t metadataLength;
     std::string metadata;
