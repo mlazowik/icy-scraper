@@ -48,6 +48,16 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    if (radioPort->getValue() > 65535 || radioPort->getValue() <= 0) {
+        std::cerr << radioPort->getValue() << " is not a valid port\n";
+        exit(EXIT_FAILURE);
+    }
+
+    if (controlPort->getValue() > 65535 || controlPort->getValue() <= 0) {
+        std::cerr << controlPort->getValue() << " is not a valid port\n";
+        exit(EXIT_FAILURE);
+    }
+
     TCPSocket radio;
     UDPSocket control;
 

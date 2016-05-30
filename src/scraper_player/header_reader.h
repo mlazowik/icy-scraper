@@ -23,6 +23,8 @@ private:
     int metadataInterval = 0;
     bool metadataIntervalPresent = false;
 
+    bool firstLine = true;
+
     bool readEmptyLine = false;
 
     int parseMetadataHeader();

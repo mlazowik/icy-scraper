@@ -177,7 +177,7 @@ std::string ScraperPlayer::getRequest() {
 }
 
 Reader *ScraperPlayer::getStreamChunkReader() {
-    this->chunkLength = 10;
+    this->chunkLength = 1000;
 
     if (this->metadataInterval > 0) {
         this->chunkLength = std::min(this->chunkLength, this->leftTillMetadata);

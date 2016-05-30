@@ -1,5 +1,6 @@
 #include <stream/string_reader.h>
 #include <string-utils/utils.h>
+#include <iostream>
 
 #include "header_reader.h"
 
@@ -15,10 +16,17 @@ void HeaderReader::readNextChunk() {
     this->reader->readNextChunk();
 
     if (reader->finished()) {
-        // TODO: Check if protocol & status match (ICY 200)
-
         this->currentLine = ((StringReader*)reader)->getValue();
         delete this->reader;
+
+        if (this->firstLine) {
+            if (this->currentLine != "ICY 200 OK\r\n") {
+                std::cerr << "not an icy server\n";
+                exit(EXIT_FAILURE);
+            }
+
+            this->firstLine = false;
+        }
 
         if (String::startsWith(this->currentLine, this->metadataIntervalHeader)) {
             this->metadataIntervalPresent = true;
@@ -55,8 +63,6 @@ bool HeaderReader::finished() const {
 }
 
 Reader* HeaderReader::getLineReader() {
-    // TODO: Slip long header lines
-
     return new StringReader(this->stream, [&](std::string s) {
         return String::endsWith(s, this->EOL);
     });
