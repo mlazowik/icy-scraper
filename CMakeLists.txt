@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(chat)
+project(icy-scraper)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fprofile-arcs -ftest-coverage")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
@@ -49,7 +49,11 @@ set(PLAYER_SOURCE_FILES
         src/scraper_player/player_options.cpp
         src/scraper_player/player_options.h
         src/scraper_player/scraper_player.cpp
-        src/scraper_player/scraper_player.h src/scraper_player/header_reader.cpp src/scraper_player/header_reader.h src/scraper_player/metadata_reader.cpp src/scraper_player/metadata_reader.h)
+        src/scraper_player/scraper_player.h
+        src/scraper_player/header_reader.cpp
+        src/scraper_player/header_reader.h
+        src/scraper_player/metadata_reader.cpp
+        src/scraper_player/metadata_reader.h)
 
 add_executable(player ${PLAYER_SOURCE_FILES})
 
