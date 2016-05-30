@@ -167,7 +167,7 @@ std::string ScraperPlayer::getRequest() {
     std::string type = "GET " + this->streamPath + " HTTP/1.0" + this->EOL;
     std::string agent = "User-Agent: ICY-scraper 1.0 / Networking class @ University of Warsaw project" + this->EOL;
     std::string metadataFlag = (this->metadata) ? "1" : "0";
-    std::string metadataTag = "Icy-Metadata:" + metadataFlag + this->EOL;
+    std::string metadataTag = "Icy-MetaData:" + metadataFlag + this->EOL;
 
     return type + agent + metadataTag + this->EOL;
 }
