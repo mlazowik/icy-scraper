@@ -105,21 +105,24 @@ void ScraperPlayer::handleRadioEvent(TCPSocket *socket, short revents) {
 void ScraperPlayer::handleControlEvent(UDPSocket *socket, short revents) {
     struct sockaddr_in client_address;
     socklen_t address_length = (socklen_t) sizeof(client_address);
-    char buffer[10];
+    char buffer[11];
     int flags = 0, send_flags = 0;
 
-    ssize_t len = recvfrom(socket->getDescriptor(), buffer, sizeof(buffer),
-                           flags, (struct sockaddr *) &client_address,
+    ssize_t len = recvfrom(socket->getDescriptor(),
+                           buffer,
+                           sizeof(buffer) - sizeof(char), flags,
+                           (struct sockaddr *) &client_address,
                            &address_length);
 
-    // TODO: check if this overflows
     buffer[len] = '\0';
 
     std::string command(buffer);
 
-    if (command == "PAUSE") this->writing = false;
-    else if (command == "PLAY") this->writing = true;
-    else if (command == "TITLE") {
+    if (command == "PAUSE") {
+        this->writing = false;
+    } else if (command == "PLAY"){
+        this->writing = true;
+    } else if (command == "TITLE") {
         ssize_t sent_len = sendto(
                 socket->getDescriptor(),
                 this->currentTitle.c_str(),
@@ -132,9 +135,11 @@ void ScraperPlayer::handleControlEvent(UDPSocket *socket, short revents) {
         if (sent_len != this->currentTitle.length()) {
             throw new std::runtime_error("Error while replying to TITLE");
         }
+    } else if (command == "QUIT") {
+        exit(EXIT_SUCCESS);
+    } else {
+        std::cerr << "Unknown command: " << command << "\n";
     }
-    else if (command == "QUIT") exit(EXIT_SUCCESS);
-    else std::cerr << "Unknown command: " << command << "\n";
 }
 
 std::string ScraperPlayer::getTitle(std::string metadata) {
