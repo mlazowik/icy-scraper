@@ -7,10 +7,11 @@
 #include "metadata_reader.h"
 
 ScraperPlayer::ScraperPlayer(TCPSocket &radioSocket, UDPSocket &controlSocket,
-                             IOEvents &events, std::string streamPath,
-                             bool metadata)
+                             Descriptor &output, IOEvents &events,
+                             std::string streamPath, bool metadata)
         : radioSocket(radioSocket), controlSocket(controlSocket),
-          events(events), streamPath(streamPath), metadata(metadata) {
+          output(output), events(events), streamPath(streamPath),
+          metadata(metadata) {
     this->reader = new HeaderReader(this->radioSocket);
     this->reading = Reading::HEADER;
 }
@@ -62,7 +63,7 @@ void ScraperPlayer::handleRadioEvent(TCPSocket *socket, short revents) {
                 s = ((StringReader*)this->reader)->getValue();
                 // TODO: use event loop for writing
                 if (this->writing) {
-                    write(fileno(stdout), s.c_str(), s.length());
+                    write(this->output.getDescriptor(), s.c_str(), s.length());
                 }
 
                 delete this->reader;

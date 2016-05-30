@@ -9,7 +9,8 @@
 class ScraperPlayer {
 public:
     ScraperPlayer(TCPSocket &radioSocket, UDPSocket &controlSocket,
-                  IOEvents &events, std::string streamPath, bool metadata);
+                  Descriptor &output, IOEvents &events, std::string streamPath,
+                  bool metadata);
     void run();
 
 private:
@@ -27,6 +28,7 @@ private:
 
     TCPSocket radioSocket;
     UDPSocket controlSocket;
+    Descriptor output;
     IOEvents events;
     std::string streamPath;
     bool metadata;

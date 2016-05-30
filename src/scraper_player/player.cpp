@@ -1,5 +1,8 @@
+#include <fcntl.h>
+
 #include <iostream>
 #include <vector>
+#include <system_error>
 
 #include <options/string_parser.h>
 #include <options/number_parser.h>
@@ -9,6 +12,22 @@
 
 #include "player_options.h"
 #include "scraper_player.h"
+
+int getOutputDescriptor(std::string filename) {
+    int output_descriptor;
+
+    if (filename == "-") {
+        output_descriptor = fileno(stdout);
+    } else {
+        output_descriptor = open(filename.c_str(), O_WRONLY | O_CREAT, 0644);
+
+        if (output_descriptor == -1) {
+            throw std::system_error(errno, std::system_category(), filename);
+        }
+    }
+
+    return output_descriptor;
+}
 
 int main(int argc, char* argv[]) {
     auto radioHost = std::make_shared<StringParser>(argv[1]);
@@ -29,18 +48,14 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    std::cerr << "Radio: http://" << radioHost->getValue() << ":" <<
-            radioPort->getValue() << streamPath->getValue() << ", metadata: " <<
-            metadata->getValue() << "\n";
-    std::cerr << "File: " << file->getValue() << "\n";
-    std::cerr << "Control port: " << controlPort->getValue() << "\n";
-
     TCPSocket radio;
     UDPSocket control;
 
     IOEvents events(2);
 
     try {
+        Descriptor output(getOutputDescriptor(file->getValue()));
+
         control.setPort(controlPort->getValue());
         control.bindToAddress();
 
@@ -49,8 +64,8 @@ int main(int argc, char* argv[]) {
 
         radio.connect();
 
-        ScraperPlayer player(radio, control, events, streamPath->getValue(),
-                             metadata->getValue());
+        ScraperPlayer player(radio, control, output, events,
+                             streamPath->getValue(), metadata->getValue());
 
         player.run();
     } catch (std::exception &ex) {
