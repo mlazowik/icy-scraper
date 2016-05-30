@@ -44,6 +44,10 @@ void ScraperPlayer::handleRadioEvent(TCPSocket *socket, short revents) {
     try {
         this->reader->readNextChunk();
     } catch (stream_closed_error &ex) {
+        if (this->reading == Reading::HEADER) {
+            std::cerr << "connection closed while reading header\n";
+            exit(EXIT_FAILURE);
+        }
         exit(EXIT_SUCCESS);
     }
 
