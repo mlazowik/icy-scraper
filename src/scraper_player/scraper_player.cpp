@@ -164,13 +164,12 @@ std::string ScraperPlayer::getTitle(std::string metadata) {
 }
 
 std::string ScraperPlayer::getRequest() {
-    // TODO: Send user agent in request
-
     std::string type = "GET " + this->streamPath + " HTTP/1.0" + this->EOL;
+    std::string agent = "User-Agent: ICY-scraper 1.0 / Networking class @ University of Warsaw project" + this->EOL;
     std::string metadataFlag = (this->metadata) ? "1" : "0";
     std::string metadataTag = "Icy-Metadata:" + metadataFlag + this->EOL;
 
-    return type + metadataTag + this->EOL;
+    return type + agent + metadataTag + this->EOL;
 }
 
 Reader *ScraperPlayer::getStreamChunkReader() {
