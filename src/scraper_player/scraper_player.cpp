@@ -41,7 +41,11 @@ void ScraperPlayer::run() {
 }
 
 void ScraperPlayer::handleRadioEvent(TCPSocket *socket, short revents) {
-    this->reader->readNextChunk();
+    try {
+        this->reader->readNextChunk();
+    } catch (stream_closed_error &ex) {
+        exit(EXIT_SUCCESS);
+    }
 
     if (reader->finished()) {
         std::string s, metadata;
@@ -114,8 +118,8 @@ void ScraperPlayer::handleControlEvent(UDPSocket *socket, short revents) {
     std::string command(buffer);
 
     if (command == "PAUSE") this->writing = false;
-    if (command == "PLAY") this->writing = true;
-    if (command == "TITLE") {
+    else if (command == "PLAY") this->writing = true;
+    else if (command == "TITLE") {
         ssize_t sent_len = sendto(
                 socket->getDescriptor(),
                 this->currentTitle.c_str(),
@@ -129,7 +133,8 @@ void ScraperPlayer::handleControlEvent(UDPSocket *socket, short revents) {
             throw new std::runtime_error("Error while replying to TITLE");
         }
     }
-    if (command == "QUIT") exit(EXIT_SUCCESS);
+    else if (command == "QUIT") exit(EXIT_SUCCESS);
+    else std::cerr << "Unknown command: " << command << "\n";
 }
 
 std::string ScraperPlayer::getTitle(std::string metadata) {
